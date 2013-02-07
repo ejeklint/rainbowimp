@@ -1,0 +1,37 @@
+<html>
+<head>
+	<script>
+		function sendForm(form) {
+			var leds;
+			if (form.leds.value == "") {
+				leds = null;
+			} else {
+				// Make proper array of integers
+				leds = form.leds.value.split(",").map(function (item) {
+					return +item;
+				});
+			}
+			alert(leds);
+
+			data = {
+				effect: form.effect.value,
+				colour: form.colour.value,
+				leds: leds
+			};
+			form.value.value = JSON.stringify(data);
+
+			alert(form.value.value);
+			form.submit();
+		}
+	</script>
+</head>
+<body>
+	<form action="https://api.electricimp.com/v1/3c8a711d0f8a4a3f/30ee5642a7a3573d" method="post">
+		<input type="hidden" name="value">
+		Effect:<input type="text" name="effect" autofocus="autofocus">
+		Colour:<input type="text" name="colour">
+		LEDs:<input name="leds">
+		<input type="button" value="Submit" onClick="sendForm(this.form);">
+	</form>
+  </body>
+</html>
