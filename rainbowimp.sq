@@ -61,19 +61,19 @@ class WS2801 {
 	// Unless a third parameter is true, previous strip colors will be lost. To keep them
 	// call with for example setColour(Colour.blue, [1,2,3], true)
 	//
-	function setColour(colour, index = null, keepValues = false) {
+	function setColour(colour, leds = null, keepValues = false) {
 		if (!keepValues) {
 			// Allocate a new and clean blob (all leds off)
 			strip = blob(ledCount * 3);
 		}
-		if (index == null) {
+		if (leds == null || leds == "null") {
 			// Set whole strip to same colour
 			for (local i = 0; i < ledCount; i++) {
 				setLedColour(i, colour);
 			}
-		} else if (typeof index == "array") {
+		} else if (typeof leds == "array") {
 			// Set leds in array to colour
-			foreach(i in index) {
+			foreach(i in leds) {
 				setLedColour(i, colour);
 			}
 		} else {
@@ -145,6 +145,7 @@ class WS2801 {
 	// Sets color values for each led at position
 	//
 	function setLedColour(led, colour) {
+		local led = led.tointeger();
 		strip[led*3] = colour[0];
 		strip[led*3+1] = colour[1];
 		strip[led*3+2] = colour[2];
@@ -201,13 +202,13 @@ class WS2801 {
 			colour[0] = 255 - position * 3;
 			colour[1] = 0;
 			colour[2] = position * 3;
-			return color;
+			return colour;
 		} else {
 			position = position - 170;
 			colour[0] = 0;
 			colour[1] = position * 3;
 			colour[2] = 255 - position * 3;
-			return color;
+			return colour;
 		}
 	}
 }
@@ -222,7 +223,7 @@ class LedStripInput extends InputPort
 
 	function set(value) {
 		server.log("value: " + value);
-		server.log("value.func: " + value.effect + ", value.colour: " + value.colour + ", value.ledArray: " + value.leds);
+		server.log("value.effect: " + value.effect + ", value.colour: " + value.colour + ", value.leds: " + value.leds);
 		stripHandler[value.effect](Colour[value.colour], value.leds);
 	}
 }
