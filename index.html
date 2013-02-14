@@ -71,7 +71,7 @@
               <label for="leds">
                 LEDs
               </label>
-              <input name="leds" type="" placeholder="0,1,2,5,8,11" class="input-block-level">
+              <input name="leds" type="" class="input-block-level">
             </div>
           </div>
         </div>
@@ -114,16 +114,16 @@
           ledString = $form.find('input[name="leds"]').val(),
           effect = $form.find('input[name="effect"]').val(),
           colour = $form.find('input[name="colour"]').val();
-        
-        if (ledString == "") {
-          leds = null;
+
+        if (ledString === undefined || ledString === "") {
+          leds = 'null';
         } else {
           // Make proper array of integers
           leds = ledString.split(",").map(function (item) {
             return +item;
           });
         }
-         
+        
         var data = {
           value: {
             effect: effect,
@@ -131,7 +131,7 @@
             leds: leds
           }
         };
-        
+
         var url = $('input[name="url"]').val();
         var jqxhr = $.post(url, data)
         .done(function( data ) {
