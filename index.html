@@ -1,37 +1,155 @@
-<html>
-<head>
-	<script>
-		function sendForm(form) {
-			var leds;
-			if (form.leds.value == "") {
-				leds = null;
-			} else {
-				// Make proper array of integers
-				leds = form.leds.value.split(",").map(function (item) {
-					return +item;
-				});
-			}
-			alert(leds);
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <title>Your Personal Rainbow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Per Ejeklint">
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body { padding-top: 60px; /* 60px to make the container go all the way
+      to the bottom of the topbar */ }
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>
+        Rainbowimp!
+      </h3>
+      <div class="row">
+        <div class="span8">
+          <form>
+            <div class="control-group">
+              <label for="url">
+                Imp URL
+              </label>
+              <input name="url" type="url" placeholder="https://api.electricimp.com/v1/abc/123"
+              class="input-block-level">
+            </div>
+          </form>
+        </div>
+        <div class="span4">
+        </div>
+      </div>
+      <form id="imp_values" action0"/">
+        <div class="row">
+          <div class="span4">
+            <div class="control-group">
+              <label for="effect">
+                Effect
+              </label>
+              <input name="effect" type="" placeholder="setColour" class="input-block-level">
+            </div>
+          </div>
+          <div class="span4">
+            <div class="control-group">
+              <label for="colour">
+                Colour
+              </label>
+              <input name="colour" type="" placeholder="blue" class="input-block-level">
+            </div>
+          </div>
+          <div class="span4">
+            <div class="control-group">
+              <label for="leds">
+                LEDs
+              </label>
+              <input name="leds" type="" placeholder="0,1,2,5,8,11" class="input-block-level">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span12">
+            <button type="submit" class="btn btn-primary">Set</button>
+          </div>
+        </div>
+      </form>
+      
+      <div id="response"></div>
+    </div>
 
-			data = {
-				effect: form.effect.value,
-				colour: form.colour.value,
-				leds: leds
-			};
-			form.value.value = JSON.stringify(data);
-
-			alert(form.value.value);
-			form.submit();
-		}
-	</script>
-</head>
-<body>
-	<form action="https://api.electricimp.com/v1/3c8a711d0f8a4a3f/30ee5642a7a3573d" method="post">
-		<input type="hidden" name="value">
-		Effect:<input type="text" name="effect" autofocus="autofocus">
-		Colour:<input type="text" name="colour">
-		LEDs:<input name="leds">
-		<input type="button" value="Submit" onClick="sendForm(this.form);">
-	</form>
+    <style>
+      
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script src="assets/js/bootstrap.js">
+    </script>
+    <script>
+      function setCookie(name, value) {
+        var today = new Date();
+        var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+        document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+      }
+      
+      function getCookie(name) {
+        var re = new RegExp(name + "=([^;]+)");
+        var value = re.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+      }
+    
+      // Attach custom submit to form
+      $('#imp_values').submit(function(event) {
+        event.preventDefault();
+        
+        var leds;
+        var $form = $(this),
+          ledString = $form.find('input[name="leds"]').val(),
+          effect = $form.find('input[name="effect"]').val(),
+          colour = $form.find('input[name="colour"]').val();
+        
+        if (ledString == "") {
+          leds = null;
+        } else {
+          // Make proper array of integers
+          leds = ledString.split(",").map(function (item) {
+            return +item;
+          });
+        }
+         
+        var data = {
+          value: {
+            effect: effect,
+            colour: colour,
+            leds: leds
+          }
+        };
+        
+        var url = $('input[name="url"]').val();
+        var jqxhr = $.post(url, data)
+        .done(function( data ) {
+          var content = $( data ).find('#content');
+          $("#response").empty().append('content' + content);
+        });
+      });
+      
+      // Set default URL if there is one
+      var url = getCookie("imp_url");
+      if (url !== undefined) {
+        $("[name='url']").val(getCookie("imp_url"));
+      }
+    
+      // For quick test, some default values
+      $("[name='effect']").val("setColour");
+      $("[name='colour']").val("blue");
+      $("[name='leds']").val("5,15");
+    </script>
   </body>
 </html>
