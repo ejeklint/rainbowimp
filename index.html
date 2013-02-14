@@ -41,7 +41,7 @@
                 Imp URL
               </label>
               <input name="url" type="url" placeholder="https://api.electricimp.com/v1/abc/123"
-              class="input-block-level">
+              class="input-block-level" onchange="setCookie('imp_url', this.value)">
             </div>
           </form>
         </div>
@@ -71,7 +71,7 @@
               <label for="leds">
                 LEDs
               </label>
-              <input name="leds" type="" class="input-block-level">
+              <input name="leds" type="" placeholder="0,1,5,18" class="input-block-level">
             </div>
           </div>
         </div>
